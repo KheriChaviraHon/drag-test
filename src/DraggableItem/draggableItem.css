@@ -1,0 +1,21 @@
+.draggableItem {
+    background-color:lightblue;
+    border: 1px solid black;
+    margin: 5px;
+    min-width: 200px;
+    text-align: center;
+
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+}
+
+.draggableItem:active {
+    background-color: white;
+}
+
+.dragIcon {
+    width: 20px;
+    height: 20px;
+    margin: 0 10px;
+}
