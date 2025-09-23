@@ -9,25 +9,29 @@ class DraggableList extends Component {
 
         this.state = {
             list: [
-                {id: 0, name: 'Anderson Paak'},
-                {id: 1, name: 'Billie Eilish'},
-                {id: 2, name: 'Childish Gambino'},
-                {id: 3, name: 'Damiano David'},
+                {id: 'a', name: 'Anderson Paak'},
+                {id: 'b', name: 'Billie Eilish'},
+                {id: 'c', name: 'Childish Gambino'},
+                {id: 'd', name: 'Damiano David'},
             ],
-            draggedItemId: 0,
-            draggedOverItemId: 0
+            draggedItemIdx: 0,
+            draggedOverItemIdx: 0
         }
 
         this.handleSort = this.handleSort.bind(this);
     }
 
-    handleSort () {
-        const { list, draggedItemId, draggedOverItemId } = this.state;
+    getIndex(id) {
+        return this.state.list.findIndex((item) => item.id === id);
+    }
 
+    handleSort () {
+        const { list, draggedItemIdx, draggedOverItemIdx } = this.state;
         const listClone = [...list];
-        const temp = listClone[draggedItemId];
-        listClone[draggedItemId] = listClone[draggedOverItemId];
-        listClone[draggedOverItemId] = temp;
+
+        const temp = listClone[draggedItemIdx];
+        listClone[draggedItemIdx] = listClone[draggedOverItemIdx];
+        listClone[draggedOverItemIdx] = temp;
 
         this.setState({ list: listClone});
     }
@@ -39,15 +43,15 @@ class DraggableList extends Component {
             <div className="draggableList">
                 {list.map((item) => (
                     <DraggableItem
-                        onDragStart={() => this.setState({ draggedItemId: item.id })}
-                        onDragEnter={() => this.setState({ draggedOverItemId: item.id})}
+                        onDragStart={() => this.setState({ draggedItemIdx: this.getIndex(item.id) })}
+                        onDragEnter={() => this.setState({ draggedOverItemIdx: this.getIndex(item.id)})}
                         onDragEnd={this.handleSort}
                         onDragOver={(e) => e.preventDefault()}
                         item={item}
                     />
                 ))}
-                <p>{`draggedItemId: ${this.state.draggedItemId}`}</p>
-                <p>{`draggedOverItemId: ${this.state.draggedOverItemId}`}</p>
+                <p>{`draggedItemIdxx: ${this.state.draggedItemIdx}`}</p>
+                <p>{`draggedOverItemIdxx: ${this.state.draggedOverItemIdx}`}</p>
             </div>
         );
     }
