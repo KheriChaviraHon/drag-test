@@ -29,9 +29,7 @@ class DraggableList extends Component {
         const { list, draggedItemIdx, draggedOverItemIdx } = this.state;
         const listClone = [...list];
 
-        const temp = listClone[draggedItemIdx];
-        listClone[draggedItemIdx] = listClone[draggedOverItemIdx];
-        listClone[draggedOverItemIdx] = temp;
+        listClone.splice(draggedOverItemIdx, 0, listClone.splice(draggedItemIdx, 1)[0]);
 
         this.setState({ list: listClone});
     }
@@ -50,8 +48,8 @@ class DraggableList extends Component {
                         item={item}
                     />
                 ))}
-                <p>{`draggedItemIdxx: ${this.state.draggedItemIdx}`}</p>
-                <p>{`draggedOverItemIdxx: ${this.state.draggedOverItemIdx}`}</p>
+                <p>{`draggedItemIdx: ${this.state.draggedItemIdx}`}</p>
+                <p>{`draggedOverItemIdx: ${this.state.draggedOverItemIdx}`}</p>
             </div>
         );
     }
