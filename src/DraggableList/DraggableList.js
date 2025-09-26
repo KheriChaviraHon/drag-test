@@ -45,10 +45,10 @@ class DraggableList extends Component {
             if (!ref) return false;
             const rect = ref.getBoundingClientRect();
             return (
-            x >= rect.left &&
-            x <= rect.right &&
-            y >= rect.top &&
-            y <= rect.bottom
+                x >= rect.left &&
+                x <= rect.right &&
+                y >= rect.top &&
+                y <= rect.bottom
             );
         });
 
