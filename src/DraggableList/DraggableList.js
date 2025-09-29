@@ -23,7 +23,7 @@ class DraggableList extends Component {
         this.handleTouchEnd = this.handleTouchEnd.bind(this);
     }
 
-    getIndex(id) {
+    getIndex (id) {
         return this.state.list.findIndex((item) => item.id === id);
     }
 
@@ -34,6 +34,13 @@ class DraggableList extends Component {
         listClone.splice(draggedOverItemIdx, 0, listClone.splice(draggedItemIdx, 1)[0]);
 
         this.setState({ list: listClone});
+    }
+
+    handleDragStart (e, item, targetRefs) {
+        const elementRef = targetRefs[this.getIndex(item.id)];
+
+        e.dataTransfer.setDragImage(elementRef, 10, 10);
+        this.setState({ draggedItemIdx: this.getIndex(item.id) })
     }
 
     handleTouchMove = (e, targetRefs) => {
@@ -71,7 +78,7 @@ class DraggableList extends Component {
                     <DraggableItem
                         key={item.id}
                         ref={el => this.targetRefs[this.getIndex(item.id)] = el}
-                        onDragStart={() => this.setState({ draggedItemIdx: this.getIndex(item.id) })}
+                        onDragStart={(e) => this.handleDragStart(e, item, this.targetRefs)}
                         onDragEnter={() => this.setState({ draggedOverItemIdx: this.getIndex(item.id)})}
                         onDragEnd={this.handleSort}
                         onDragOver={(e) => e.preventDefault()}
