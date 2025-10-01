@@ -1,9 +1,8 @@
 import React, { forwardRef } from "react";
-import icon from '../assets/icon.svg';
 import './draggableItem.css';
 
 const DraggableItem = forwardRef((props, ref) => {
-    const { onDragStart, onDragEnter, onDragEnd, onDragOver, item, onTouchStart, onTouchMove, onTouchEnd } = props;
+    const {onDragEnter, onDragOver, item, onTouchStart, onTouchMove, onTouchEnd, renderDragHandle } = props;
 
     return (
         <div
@@ -15,14 +14,7 @@ const DraggableItem = forwardRef((props, ref) => {
             onTouchMove={onTouchMove}
             onTouchEnd={onTouchEnd}
         >
-            <img 
-                className="dragIcon" 
-                src={icon} 
-                draggable
-                onDragStart={onDragStart}
-                onDragEnd={onDragEnd}
-                alt="drag handle"
-            />
+           {renderDragHandle()}
             <p>{item.name}</p>
         </div>
     );

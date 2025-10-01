@@ -1,6 +1,8 @@
 import React, { Component } from "react";
 
 import './draggableList.css';
+
+import icon from '../assets/icon.svg';
 import DraggableItem from "../DraggableItem/DraggableItem";
 
 class DraggableList extends Component {
@@ -39,7 +41,12 @@ class DraggableList extends Component {
     handleDragStart (e, item, targetRefs) {
         const elementRef = targetRefs[this.getIndex(item.id)];
 
-        e.dataTransfer.setDragImage(elementRef, 10, 10);
+        // const rect = elementRef.getBoundingClientRect();
+        // const offsetX = rect.width / 2;
+        // const offsetY = rect.height / 2;
+        // e.dataTransfer.setDragImage(elementRef, offsetX, offsetY);
+
+        e.dataTransfer.setDragImage(elementRef, 0, 0);
         this.setState({ draggedItemIdx: this.getIndex(item.id) })
     }
 
@@ -69,6 +76,19 @@ class DraggableList extends Component {
         }
     }
 
+    renderDragHandle = (item) => {
+        return (
+            <img 
+                className="dragIcon" 
+                src={icon} 
+                draggable
+                onDragStart={(e) => this.handleDragStart(e, item, this.targetRefs)}
+                onDragEnd={this.handleSort}
+                alt="drag handle"
+            />
+        );
+    }
+
     render() {
         const { list } = this.state;
 
@@ -78,14 +98,13 @@ class DraggableList extends Component {
                     <DraggableItem
                         key={item.id}
                         ref={el => this.targetRefs[this.getIndex(item.id)] = el}
-                        onDragStart={(e) => this.handleDragStart(e, item, this.targetRefs)}
                         onDragEnter={() => this.setState({ draggedOverItemIdx: this.getIndex(item.id)})}
-                        onDragEnd={this.handleSort}
                         onDragOver={(e) => e.preventDefault()}
                         item={item}
                         onTouchStart={() => this.setState({ draggedItemIdx: this.getIndex(item.id) })}
                         onTouchMove={(e) => this.handleTouchMove(e, this.targetRefs)}
                         onTouchEnd={() => this.handleTouchEnd()}
+                        renderDragHandle={() => this.renderDragHandle(item)}
                     />
                 ))}
                 <p>{`draggedItemIdx: ${this.state.draggedItemIdx}`}</p>

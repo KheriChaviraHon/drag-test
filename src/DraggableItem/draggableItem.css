@@ -13,9 +13,3 @@
 .draggableItem:active {
     background-color: white;
 }
-
-.dragIcon {
-    width: 20px;
-    height: 20px;
-    margin: 0 10px;
-}
