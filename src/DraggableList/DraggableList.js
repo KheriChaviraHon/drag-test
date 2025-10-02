@@ -15,6 +15,8 @@ class DraggableList extends Component {
                 {id: 'b', name: 'Billie Eilish'},
                 {id: 'c', name: 'Childish Gambino'},
                 {id: 'd', name: 'Damiano David'},
+                {id: 'e', name: 'Elton John'},
+                {id: 'f', name: 'Frank Sinatra'}
             ],
             draggedItemIdx: 0,
             draggedOverItemIdx: 0
@@ -40,13 +42,9 @@ class DraggableList extends Component {
 
     handleDragStart (e, item, targetRefs) {
         const elementRef = targetRefs[this.getIndex(item.id)];
+        const rect = elementRef.getBoundingClientRect();
 
-        // const rect = elementRef.getBoundingClientRect();
-        // const offsetX = rect.width / 2;
-        // const offsetY = rect.height / 2;
-        // e.dataTransfer.setDragImage(elementRef, offsetX, offsetY);
-
-        e.dataTransfer.setDragImage(elementRef, 0, 0);
+        e.dataTransfer.setDragImage(elementRef, 20,  rect.height / 2);
         this.setState({ draggedItemIdx: this.getIndex(item.id) })
     }
 
@@ -84,6 +82,9 @@ class DraggableList extends Component {
                 draggable
                 onDragStart={(e) => this.handleDragStart(e, item, this.targetRefs)}
                 onDragEnd={this.handleSort}
+                onTouchStart={() => this.setState({ draggedItemIdx: this.getIndex(item.id) })}
+                onTouchMove={(e) => this.handleTouchMove(e, this.targetRefs)}
+                onTouchEnd={() => this.handleTouchEnd()}
                 alt="drag handle"
             />
         );
@@ -96,14 +97,9 @@ class DraggableList extends Component {
             <div className="draggableList">
                 {list.map((item) => (
                     <DraggableItem
-                        key={item.id}
                         ref={el => this.targetRefs[this.getIndex(item.id)] = el}
                         onDragEnter={() => this.setState({ draggedOverItemIdx: this.getIndex(item.id)})}
-                        onDragOver={(e) => e.preventDefault()}
                         item={item}
-                        onTouchStart={() => this.setState({ draggedItemIdx: this.getIndex(item.id) })}
-                        onTouchMove={(e) => this.handleTouchMove(e, this.targetRefs)}
-                        onTouchEnd={() => this.handleTouchEnd()}
                         renderDragHandle={() => this.renderDragHandle(item)}
                     />
                 ))}
