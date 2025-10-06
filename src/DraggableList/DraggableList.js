@@ -19,7 +19,10 @@ class DraggableList extends Component {
                 {id: 'f', name: 'Frank Sinatra'}
             ],
             draggedItemIdx: 0,
-            draggedOverItemIdx: 0
+            draggedOverItemIdx: 0,
+            dragging: false,
+            touchPosition: {x: 0, y: 0},
+            elementPosition: {x: 0, y: 0}
         }
         this.targetRefs = [];
 
@@ -53,25 +56,46 @@ class DraggableList extends Component {
         const x = touch.clientX;
         const y = touch.clientY;
 
-        const index = targetRefs.findIndex((ref) => {
-            if (!ref) return false;
+        this.setState({touchPosition: {x: x, y: y}});
+
+        const matchingIndexes = targetRefs.reduce((matches, ref, index) => {
+            if (!ref) return matches;
             const rect = ref.getBoundingClientRect();
-            return (
+            if (
                 x >= rect.left &&
                 x <= rect.right &&
                 y >= rect.top &&
                 y <= rect.bottom
-            );
-        });
+            ) {
+                matches.push(index);
+            }
+            return matches;
+        }, []);
+
+        const index = matchingIndexes.find((index) => 
+            index !== this.state.draggedItemIdx
+        );
 
         this.setState({ draggedOverItemIdx: index !== -1 ? index : null });
     }
 
+    handleTouchStart = (e, item) => {
+        const elementRef = this.targetRefs[this.getIndex(item.id)];
+        const rect = elementRef.getBoundingClientRect();
+        
+        this.setState({ 
+            draggedItemIdx: this.getIndex(item.id),
+            dragging: true,
+            elementPosition: {x: rect.x, y: rect.y}
+        });
+    }
+
     handleTouchEnd = () => {
-        const { draggedOverItemIdx } = this.state;
-        if( draggedOverItemIdx != null) {
+        const { draggedItemIdx, draggedOverItemIdx } = this.state;
+        if( draggedOverItemIdx != null && draggedItemIdx != null) {
             this.handleSort();
         }
+        this.setState({dragging: false});
     }
 
     renderDragHandle = (item) => {
@@ -82,10 +106,31 @@ class DraggableList extends Component {
                 draggable
                 onDragStart={(e) => this.handleDragStart(e, item, this.targetRefs)}
                 onDragEnd={this.handleSort}
-                onTouchStart={() => this.setState({ draggedItemIdx: this.getIndex(item.id) })}
+                onTouchStart={(e) => {this.handleTouchStart(e, item)}}
                 onTouchMove={(e) => this.handleTouchMove(e, this.targetRefs)}
                 onTouchEnd={() => this.handleTouchEnd()}
                 alt="drag handle"
+            />
+        );
+    }
+
+    renderDraggableItem = (item) => {
+        const { touchPosition, elementPosition } = this.state;
+
+        const dragging = this.state.dragging && this.state.draggedItemIdx === this.getIndex(item.id);
+        const transform = {
+            x: touchPosition.x - elementPosition.x - 15,
+            y: touchPosition.y - elementPosition.y - 20
+        }
+
+        return (
+            <DraggableItem
+                item={item}
+                ref={el => this.targetRefs[this.getIndex(item.id)] = el}
+                onDragEnter={() => this.setState({ draggedOverItemIdx: this.getIndex(item.id)})}
+                renderDragHandle={() => this.renderDragHandle(item)}
+                dragging={dragging}
+                transform={transform}
             />
         );
     }
@@ -95,14 +140,7 @@ class DraggableList extends Component {
 
         return (
             <div className="draggableList">
-                {list.map((item) => (
-                    <DraggableItem
-                        ref={el => this.targetRefs[this.getIndex(item.id)] = el}
-                        onDragEnter={() => this.setState({ draggedOverItemIdx: this.getIndex(item.id)})}
-                        item={item}
-                        renderDragHandle={() => this.renderDragHandle(item)}
-                    />
-                ))}
+                {list.map((item) => this.renderDraggableItem(item))}
                 <p>{`draggedItemIdx: ${this.state.draggedItemIdx}`}</p>
                 <p>{`draggedOverItemIdx: ${this.state.draggedOverItemIdx}`}</p>
             </div>

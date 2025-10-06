@@ -2,12 +2,23 @@ import React, { forwardRef } from "react";
 import './draggableItem.css';
 
 const DraggableItem = forwardRef((props, ref) => {
-    const {onDragEnter, onDragOver, item, onTouchStart, onTouchMove, onTouchEnd, renderDragHandle } = props;
+    const {
+        item,
+        onDragEnter,
+        onDragOver,
+        onTouchStart,
+        onTouchMove,
+        onTouchEnd,
+        renderDragHandle,
+        dragging,
+        transform
+    } = props;
 
     return (
         <div
             ref={ref}
-            className="draggableItem"
+            className={`draggableItem ${dragging ? 'dragging' : ''}`}
+            style={dragging ? {transform: `translate(${transform.x}px,${transform.y}px)`} : {}}
             onDragEnter={onDragEnter}
             onDragOver={onDragOver}
             onTouchStart={onTouchStart}
